@@ -8,6 +8,21 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <nav>
+      <div class="menu">
+        <span class="menu-icon">&#9776;</span>
+        <div class="dropdown-content">
+          <a href="#" class="pagination-link" data-type="abilities">Abilities</a>
+          <a href="#" class="pagination-link" data-type="berries">Berries</a>
+          <a href="#" class="pagination-link" data-type="moves">Moves</a>
+          <a href="#" class="pagination-link" data-type="nature">Nature</a>
+        </div>
+      </div>
+      <input type="text" id="search" placeholder="Search Pokémon..." />
+    </nav>
+    <div id="loader">
+      <!-- loader spinner -->
+    </div>
     <div id="root"></div>
     <div id="myModal" class="modal">
       <div class="modal-content">
@@ -19,5 +34,6 @@
 
     <script src="https://unpkg.com/pokeapi-js-wrapper/dist/index.js"></script>
     <script src="main.js"></script>
+    <script src="navbar.js"></script>
   </body>
 </html>

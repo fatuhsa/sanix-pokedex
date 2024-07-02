@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to bottom right, #f3f4f6, #e5e7eb);
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        max-width: 1000px;
+        padding: 40px 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        color: #1f2937;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        font-size: 1.25rem;
+        color: #4b5563;
+        font-weight: 300;
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        padding: 16px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn i {
+        font-size: 1.5rem;
+        margin-right: 12px;
+      }
+
+      .youtube {
+        background-color: #ff0000;
+      }
+      .youtube:hover {
+        background-color: #cc0000;
+      }
+
+      .facebook {
+        background-color: #1877f2;
+      }
+      .facebook:hover {
+        background-color: #1560bd;
+      }
+
+      .instagram {
+        background-color: #e4405f;
+      }
+      .instagram:hover {
+        background-color: #b63143;
+      }
+
+      .github {
+        background-color: #333;
+      }
+      .github:hover {
+        background-color: #1a1a1a;
+      }
+
+      @media (min-width: 640px) {
+        .button-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+  	
+    <div class="container">
+      <header>
+        <h1>Be my friend</h1>
+        <p class="subtitle">Follow me on</p>
+      </header>
+
+      <div class="button-grid">
+        <a
+          href="https://www.youtube.com/yourchannel"
+          target="_blank"
+          class="btn youtube"
+        >
+          <i class="fab fa-youtube"></i>
+          <span>YouTube</span>
+        </a>
+
+        <a
+          href="https://www.facebook.com/yourpage"
+          target="_blank"
+          class="btn facebook"
+        >
+          <i class="fab fa-facebook"></i>
+          <span>Facebook</span>
+        </a>
+
+        <a
+          href="https://www.instagram.com/youraccount"
+          target="_blank"
+          class="btn instagram"
+        >
+          <i class="fab fa-instagram"></i>
+          <span>Instagram</span>
+        </a>
+
+        <a
+          href="https://github.com/yourusername"
+          target="_blank"
+          class="btn github"
+        >
+          <i class="fab fa-github"></i>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
