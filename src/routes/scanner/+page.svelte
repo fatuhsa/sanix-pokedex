@@ -97,6 +97,13 @@
 		return parts.join(' ').toUpperCase();
 	}
 
+	function navigateToEvo(name: string) {
+		openDetail({ 
+			name, 
+			url: `https://pokeapi.co/api/v2/pokemon/${name}/` 
+		}, true);
+	}
+
 	async function openDetail(pokemon: any, keepScroll = false) {
 		const currentScroll = modalContentElement?.scrollTop || 0;
 		selectedPokemon = pokemon;
@@ -167,6 +174,10 @@
 			evolutionChain = chain;
 			specialForms = newSpecialForms;
 
+			if (keepScroll) {
+				await tick();
+				if (modalContentElement) modalContentElement.scrollTop = currentScroll;
+			}
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -314,7 +325,7 @@
 	{playCry}
 	{getTypeStyle}
 	{formatStatName}
-	navigateToEvo={() => {}} 
+	{navigateToEvo} 
 	toggleAbilities={() => isAbilitiesExpanded = !isAbilitiesExpanded}
 	toggleMoves={() => isMovesExpanded = !isMovesExpanded}
 />
