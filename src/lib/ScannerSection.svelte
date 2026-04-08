@@ -1,11 +1,14 @@
 <script lang="ts">
 	import type { Pokemon } from '$lib/types';
 	import type { Pokemon as PokemonDetail } from 'pokenode-ts';
+	import { accent } from '$lib/accent.svelte';
 
 	interface Props {
 		isScanning: boolean;
 		scanProgress: number;
 		dailyPokemon: PokemonDetail | null;
+		isShiny: boolean;
+		discoveryPercentage: string;
 		cooldownRemaining: number;
 		getTypeStyle: (type: string) => string;
 		activateScanner: () => void;
@@ -16,6 +19,8 @@
 		isScanning, 
 		scanProgress, 
 		dailyPokemon, 
+		isShiny,
+		discoveryPercentage,
 		cooldownRemaining, 
 		getTypeStyle, 
 		activateScanner, 
@@ -27,15 +32,20 @@
 	<!-- Standardized Top Bar -->
 	<div class="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
 		<div>
-			<h1 class="text-2xl font-bold tracking-tight text-white">Scanner</h1>
-			<p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">System Status</p>
+			<h1 
+				onclick={() => accent.cycle()}
+				class="text-2xl font-bold tracking-tight text-white cursor-pointer select-none active:scale-95 transition-transform"
+			>
+				Scanner
+			</h1>
+			<p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">
+				Dex Discovery: {discoveryPercentage}%
+			</p>
 		</div>
-		<div class="flex items-center gap-2 bg-primary/5 border border-primary/10 px-2.5 py-1 rounded-full shadow-[0_0_10px_rgba(0,243,255,0.05)]">
-			<div class="relative flex h-1.5 w-1.5">
-				<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-				<span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
-			</div>
-			<span class="text-[9px] font-bold text-primary uppercase tracking-[0.15em]">Active</span>
+		<div class="flex h-9 w-9 items-center justify-center bg-primary/5 border border-primary/10 rounded-full shadow-[0_0_15px_rgba(0,243,255,0.08)] text-primary">
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+			</svg>
 		</div>
 	</div>
 
@@ -65,14 +75,26 @@
 		{:else}
 			{#if dailyPokemon}
 				<div class="animate-[fadeIn_0.5s_ease-out] w-full flex flex-col items-center">
-					<div class="bg-primary/10 px-3 py-0.5 rounded-full mb-4 border border-primary/20">
-						<p class="text-[8px] font-bold text-primary tracking-widest uppercase">Pokémon Located</p>
+					<div class="flex items-center gap-2 mb-4">
+						<div class="bg-primary/10 px-3 py-0.5 rounded-full border border-primary/20">
+							<p class="text-[8px] font-bold text-primary tracking-widest uppercase">Pokémon Located</p>
+						</div>
+						{#if isShiny}
+							<div class="bg-yellow-500/10 px-3 py-0.5 rounded-full border border-yellow-500/30 animate-pulse">
+								<p class="text-[8px] font-bold text-yellow-500 tracking-widest uppercase flex items-center gap-1">
+									✨ SHINY
+								</p>
+							</div>
+						{/if}
 					</div>
 
 					<div class="relative mb-2 group">
 						<div class="bg-primary/5 absolute inset-0 rounded-full blur-2xl scale-110 opacity-40"></div>
+						{#if isShiny}
+							<div class="absolute inset-0 bg-yellow-400/10 rounded-full blur-3xl scale-125 opacity-30 animate-pulse"></div>
+						{/if}
 						<img
-							src={dailyPokemon.sprites.other?.['official-artwork'].front_default}
+							src={isShiny ? ((dailyPokemon.sprites.other?.['official-artwork'] as any).front_shiny || dailyPokemon.sprites.other?.['official-artwork'].front_default) : dailyPokemon.sprites.other?.['official-artwork'].front_default}
 							alt={dailyPokemon.name}
 							class="relative z-10 h-32 w-32 object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105"
 						/>
@@ -84,7 +106,7 @@
 					
 					<div class="mb-6 flex justify-center gap-1.5">
 						{#each dailyPokemon.types as type}
-							<span class="rounded-lg px-3 py-0.5 text-[9px] font-bold uppercase bg-surface-variant/40 text-gray-400 border border-white/5">
+							<span class="rounded-lg px-3 py-0.5 text-[9px] font-bold uppercase border {getTypeStyle(type.type.name)}">
 								{type.type.name}
 							</span>
 						{/each}

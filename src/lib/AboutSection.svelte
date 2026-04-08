@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { accent } from '$lib/accent.svelte';
+
 	interface Props {
 		apiStatus: string;
 		apiPing: number;
@@ -11,7 +13,10 @@
 	<!-- Standardized Top Bar -->
 	<div class="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
 		<div>
-			<h1 class="text-2xl font-bold tracking-tight text-white">
+			<h1 
+				onclick={() => accent.cycle()}
+				class="text-2xl font-bold tracking-tight text-white cursor-pointer select-none active:scale-95 transition-transform"
+			>
 				System Info
 			</h1>
 			<div class="flex items-center gap-2">
@@ -23,21 +28,10 @@
 				</span>
 			</div>
 		</div>
-		<div class="flex items-center gap-2 px-2.5 py-1 rounded-full border border-white/10 {apiStatus === 'ONLINE' ? 'bg-primary/5 border-primary/20' : apiStatus === 'CHECKING...' ? 'bg-yellow-500/5 border-yellow-500/20' : 'bg-red-500/5 border-red-500/20'}">
-			<div class="relative flex h-1.5 w-1.5">
-				{#if apiStatus === 'ONLINE'}
-					<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-					<span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
-				{:else if apiStatus === 'CHECKING...'}
-					<span class="animate-pulse absolute inline-flex h-full w-full rounded-full bg-yellow-500 opacity-75"></span>
-					<span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-yellow-500"></span>
-				{:else}
-					<span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
-				{/if}
-			</div>
-			<span class="text-[9px] font-bold uppercase tracking-[0.15em] {apiStatus === 'ONLINE' ? 'text-primary' : apiStatus === 'CHECKING...' ? 'text-yellow-500' : 'text-red-500'}">
-				{apiStatus}
-			</span>
+		<div class="flex h-9 w-9 items-center justify-center rounded-full border shadow-[0_0_10px_rgba(255,255,255,0.02)] {apiStatus === 'ONLINE' ? 'bg-primary/5 border-primary/20 shadow-primary/5 text-primary' : apiStatus === 'CHECKING...' ? 'bg-yellow-500/5 border-yellow-500/20 shadow-yellow-500/5 text-yellow-500' : 'bg-red-500/5 border-red-500/20 shadow-red-500/5 text-red-500'}">
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+			</svg>
 		</div>
 	</div>
 	

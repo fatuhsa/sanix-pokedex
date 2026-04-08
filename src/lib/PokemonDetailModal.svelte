@@ -180,7 +180,7 @@
 
 					<div class="mb-5 flex gap-1.5">
 						{#each detailData.types as type}
-							<span class="rounded-lg px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-surface-variant text-gray-300 border border-white/5">
+							<span class="rounded-lg px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider border {getTypeStyle(type.type.name)}">
 								{type.type.name}
 							</span>
 						{/each}
