@@ -1,16 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@500;700&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
 
 @theme {
-  --color-space: #0A0A0E;
-  --color-panel: #1C1C24;
-  --color-neon: #00F3FF;
-  --font-orbitron: "Orbitron", sans-serif;
-  --font-inter: "Inter", sans-serif;
+	/* Material 3 Inspired Palette - Deep Indigo & Slate */
+	--color-space: #121212; /* Material Dark Background */
+	--color-panel: #1e1e1e; /* Material Surface */
+	--color-surface-variant: #2c2c2c;
+	--color-primary: #d0bcff; /* M3 Light Violet */
+	--color-secondary: #ccc2dc;
+	--color-accent: #efb8c8;
+	
+	/* Compatibility with existing 'neon' class during transition */
+	--color-neon: var(--color-primary); 
+
+	--font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+	--font-orbitron: var(--font-sans); /* Fallback to sans for clean look */
+	--font-inter: var(--font-sans);
 }
 
 @layer base {
-  body {
-    @apply bg-space text-white font-inter antialiased;
-  }
+	body {
+		@apply bg-space font-sans text-white antialiased;
+	}
+	
+	/* Global Scrollbar Reset */
+	* {
+		@apply transition-colors duration-200;
+	}
 }
