@@ -2,6 +2,7 @@
 	import '../app.css';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import { base } from '$app/paths';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { accent } from '$lib/accent.svelte';
@@ -50,11 +51,11 @@
 	<nav class="bg-panel/95 fixed bottom-0 left-0 z-50 w-full border-t border-white/5 backdrop-blur-xl pb-safe shadow-lg">
 		<div class="mx-auto flex max-w-md items-center justify-around px-2 py-3">
 			<a
-				href="/"
+				href="{base}/"
 				class="group flex flex-col items-center gap-1.5 transition-all"
 			>
 				<div
-					class="flex h-8 w-16 items-center justify-center rounded-full transition-all {page.url.pathname === '/'
+					class="flex h-8 w-16 items-center justify-center rounded-full transition-all {page.url.pathname === `${base}/`
 						? 'bg-primary/20 text-primary'
 						: 'text-outline hover:bg-white/5'}"
 				>
@@ -62,15 +63,15 @@
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
 					</svg>
 				</div>
-				<span class="text-[11px] font-bold {page.url.pathname === '/' ? 'text-[#e6e1e5]' : 'text-outline'}">Dex</span>
+				<span class="text-[11px] font-bold {page.url.pathname === `${base}/` ? 'text-[#e6e1e5]' : 'text-outline'}">Dex</span>
 			</a>
 
 			<a
-				href="/scanner"
+				href="{base}/scanner"
 				class="group flex flex-col items-center gap-1.5 transition-all"
 			>
 				<div
-					class="flex h-8 w-16 items-center justify-center rounded-full transition-all {page.url.pathname === '/scanner'
+					class="flex h-8 w-16 items-center justify-center rounded-full transition-all {page.url.pathname === `${base}/scanner`
 						? 'bg-primary/20 text-primary'
 						: 'text-outline hover:bg-white/5'}"
 				>
@@ -78,15 +79,15 @@
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
 					</svg>
 				</div>
-				<span class="text-[11px] font-bold {page.url.pathname === '/scanner' ? 'text-[#e6e1e5]' : 'text-outline'}">Scanner</span>
+				<span class="text-[11px] font-bold {page.url.pathname === `${base}/scanner` ? 'text-[#e6e1e5]' : 'text-outline'}">Scanner</span>
 			</a>
 
 			<a
-				href="/collection"
+				href="{base}/collection"
 				class="group flex flex-col items-center gap-1.5 transition-all"
 			>
 				<div
-					class="flex h-8 w-16 items-center justify-center rounded-full transition-all {page.url.pathname === '/collection'
+					class="flex h-8 w-16 items-center justify-center rounded-full transition-all {page.url.pathname === `${base}/collection`
 						? 'bg-primary/20 text-primary'
 						: 'text-outline hover:bg-white/5'}"
 				>
@@ -94,15 +95,15 @@
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
 					</svg>
 				</div>
-				<span class="text-[11px] font-bold {page.url.pathname === '/collection' ? 'text-[#e6e1e5]' : 'text-outline'}">Vault</span>
+				<span class="text-[11px] font-bold {page.url.pathname === `${base}/collection` ? 'text-[#e6e1e5]' : 'text-outline'}">Vault</span>
 			</a>
 
 			<a
-				href="/info"
+				href="{base}/info"
 				class="group flex flex-col items-center gap-1.5 transition-all"
 			>
 				<div
-					class="flex h-8 w-16 items-center justify-center rounded-full transition-all {page.url.pathname === '/info'
+					class="flex h-8 w-16 items-center justify-center rounded-full transition-all {page.url.pathname === `${base}/info`
 						? 'bg-primary/20 text-primary'
 						: 'text-outline hover:bg-white/5'}"
 				>
@@ -110,7 +111,7 @@
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
 					</svg>
 				</div>
-				<span class="text-[11px] font-bold {page.url.pathname === '/info' ? 'text-[#e6e1e5]' : 'text-outline'}">Info</span>
+				<span class="text-[11px] font-bold {page.url.pathname === `${base}/info` ? 'text-[#e6e1e5]' : 'text-outline'}">Info</span>
 			</a>
 		</div>
 	</nav>

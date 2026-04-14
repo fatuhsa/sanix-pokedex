@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { Pokemon } from '$lib/types';
-	import type { Pokemon as PokemonDetail } from 'pokenode-ts';
+	import type { Pokemon, PokemonDetail } from '$lib/types';
 	import { accent } from '$lib/accent.svelte';
 
 	interface Props {
@@ -33,7 +32,7 @@
 	<div class="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
 		<div>
 			<h1 
-				onclick={() => accent.cycle()}
+				onclick={() => accent.cycle()} onkeydown={(e) => e.key === 'Enter' && accent.cycle()} role='button' tabindex='0'
 				class="text-2xl font-bold tracking-tight text-white cursor-pointer select-none active:scale-95 transition-transform"
 			>
 				Scanner
@@ -94,7 +93,7 @@
 							<div class="absolute inset-0 bg-yellow-400/10 rounded-full blur-3xl scale-125 opacity-30 animate-pulse"></div>
 						{/if}
 						<img
-							src={isShiny ? ((dailyPokemon.sprites.other?.['official-artwork'] as any).front_shiny || dailyPokemon.sprites.other?.['official-artwork'].front_default) : dailyPokemon.sprites.other?.['official-artwork'].front_default}
+							src={isShiny ? (dailyPokemon.sprites.other?.['official-artwork']?.front_shiny || dailyPokemon.sprites.other?.['official-artwork']?.front_default) : dailyPokemon.sprites.other?.['official-artwork']?.front_default}
 							alt={dailyPokemon.name}
 							class="relative z-10 h-32 w-32 object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105"
 						/>
@@ -105,7 +104,7 @@
 					</h3>
 					
 					<div class="mb-6 flex justify-center gap-1.5">
-						{#each dailyPokemon.types as type}
+						{#each dailyPokemon.types as type (type.type.name)}
 							<span class="rounded-lg px-3 py-0.5 text-[9px] font-bold uppercase border {getTypeStyle(type.type.name)}">
 								{type.type.name}
 							</span>

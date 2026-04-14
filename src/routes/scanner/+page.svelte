@@ -2,18 +2,19 @@
 	import ScannerSection from '$lib/ScannerSection.svelte';
 	import PokemonDetailModal from '$lib/PokemonDetailModal.svelte';
 	import { onMount, tick } from 'svelte';
+	import { SvelteSet } from 'svelte/reactivity';
 	import { pokeApi } from '$lib/pokeapi';
 	import { getTypeStyle } from '$lib/styles.svelte';
-	import type { Pokemon } from '$lib/types';
-	import type { Pokemon as PokemonDetail, PokemonSpecies, Ability } from 'pokenode-ts';
+	import type { Pokemon, PokemonDetail, SpeciesData, EvolutionStep, SpecialForm } from '$lib/types';
+	import type { Ability } from 'pokenode-ts';
 
-	// --- Detail Panel State (Kopi dari +page.svelte) ---
+	// --- Detail Panel State ---
 	let selectedPokemon = $state<Pokemon | null>(null);
 	let detailData = $state<PokemonDetail | null>(null);
-	let speciesData = $state<PokemonSpecies | null>(null);
+	let speciesData = $state<SpeciesData | null>(null);
 	let abilitiesDetails = $state<Ability[]>([]);
-	let specialForms = $state<any[]>([]);
-	let evolutionChain = $state<any[]>([]);
+	let specialForms = $state<SpecialForm[]>([]);
+	let evolutionChain = $state<EvolutionStep[]>([]);
 	let detailLoading = $state(false);
 	let secondaryLoading = $state(false);
 	let isPlayingCry = $state(false);
@@ -31,8 +32,8 @@
 	let scanProgress = $state(0);
 	let lastScanTime = $state<number>(0);
 	let currentTime = $state<number>(Date.now());
-	let discoveredIds = $state<Set<number>>(new Set());
-	let shinyIds = $state<Set<number>>(new Set());
+	let discoveredIds = new SvelteSet<number>();
+	let shinyIds = new SvelteSet<number>();
 
 	let discoveryPercentage = $derived(
 		((discoveredIds.size / 1025) * 100).toFixed(1)
@@ -88,9 +89,9 @@
 		}, true);
 	}
 
-	async function openDetail(pokemon: any, keepScroll = false) {
+	async function openDetail(pokemon: Pokemon | { name: string; url: string }, keepScroll = false) {
 		const currentScroll = modalContentElement?.scrollTop || 0;
-		selectedPokemon = pokemon;
+		selectedPokemon = pokemon as Pokemon;
 		detailLoading = true;
 		secondaryLoading = false;
 		
@@ -107,8 +108,8 @@
 		isMovesExpanded = false;
 
 		try {
-			const newDetail = await pokeApi.getPokemon(pokemon.name);
-			const newSpecies = await pokeApi.getPokemonSpecies(newDetail.species.name);
+			const newDetail = await pokeApi.getPokemon(pokemon.name) as unknown as PokemonDetail;
+			const newSpecies = await pokeApi.getPokemonSpecies(newDetail.species.name) as unknown as SpeciesData;
 			
 			detailData = newDetail;
 			speciesData = newSpecies;
@@ -131,7 +132,7 @@
 			const evoId = parseInt(newSpecies.evolution_chain.url.split('/').filter(Boolean).pop() || '0');
 			const evoData = await pokeApi.getEvolutionChain(evoId);
 			
-			let chain: any[] = [];
+			let chain: EvolutionStep[] = [];
 			let currentEvo: any = evoData.chain;
 			while (currentEvo) {
 				chain.push({
@@ -172,7 +173,6 @@
 
 	function playCry() {
 		if (!detailData || isPlayingCry) return;
-		// @ts-ignore
 		const cryUrl = detailData.cries?.latest || detailData.cries?.legacy;
 		if (cryUrl) {
 			isPlayingCry = true;
@@ -197,12 +197,12 @@
 		let fetchDone = false;
 		let fetchedPokemon: PokemonDetail | null = null;
 
-		const fetchPromise = (async () => {
+		(async () => {
 			try {
 				const randomId = Math.floor(Math.random() * 1025) + 1;
-				fetchedPokemon = await pokeApi.getPokemonById(randomId);
+				fetchedPokemon = await pokeApi.getPokemonById(randomId) as unknown as PokemonDetail;
 				fetchDone = true;
-			} catch (error) {
+			} catch (e) {
 				fetchDone = true;
 			}
 		})();
@@ -260,10 +260,10 @@
 		if (savedPoke) dailyPokemon = JSON.parse(savedPoke);
 		if (savedShiny) isShiny = savedShiny === 'true';
 		if (savedDiscovered) {
-			discoveredIds = new Set(JSON.parse(savedDiscovered));
+			JSON.parse(savedDiscovered).forEach((id: number) => discoveredIds.add(id));
 		}
 		if (savedShinyIds) {
-			shinyIds = new Set(JSON.parse(savedShinyIds));
+			JSON.parse(savedShinyIds).forEach((id: number) => shinyIds.add(id));
 		}
 	});
 
@@ -334,7 +334,5 @@
 	{playCry}
 	{getTypeStyle}
 	{formatStatName}
-	{navigateToEvo} 
-	toggleAbilities={() => isAbilitiesExpanded = !isAbilitiesExpanded}
-	toggleMoves={() => isMovesExpanded = !isMovesExpanded}
+	{navigateToEvo}
 />

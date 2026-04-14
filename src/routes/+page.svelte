@@ -3,22 +3,23 @@
 	import Filters from '$lib/Filters.svelte';
 	import PokemonDetailModal from '$lib/PokemonDetailModal.svelte';
 	import { onMount, tick } from 'svelte';
+	import { SvelteSet } from 'svelte/reactivity';
 	import { pokeApi } from '$lib/pokeapi';
-	import { type Pokemon, POKEMON_TYPES } from '$lib/types';
+	import { type Pokemon, type PokemonDetail, type SpeciesData, type EvolutionStep, type SpecialForm } from '$lib/types';
 	import { getTypeStyle } from '$lib/styles.svelte';
-	import type { Pokemon as PokemonDetail, PokemonSpecies, Ability } from 'pokenode-ts';
+	import type { Ability } from 'pokenode-ts';
 
 	// --- Core State ---
 	let allPokemons = $state<Pokemon[]>([]);
 	let searchQuery = $state('');
 	let selectedType = $state<string | null>(null);
-	let typeFilteredNames = $state<Set<string>>(new Set());
+	let typeFilteredNames = new SvelteSet<string>();
 	let typeLoading = $state(false);
 
 	let onlyFavorites = $state(false);
 	let onlyMega = $state(false);
 	let onlyGmax = $state(false);
-	let favorites = $state<Set<string>>(new Set());
+	let favorites = new SvelteSet<string>();
 
 	let loading = $state(true);
 	let displayedLimit = $state(20);
@@ -29,10 +30,10 @@
 	// --- Detail Panel State ---
 	let selectedPokemon = $state<Pokemon | null>(null);
 	let detailData = $state<PokemonDetail | null>(null);
-	let speciesData = $state<PokemonSpecies | null>(null);
+	let speciesData = $state<SpeciesData | null>(null);
 	let abilitiesDetails = $state<Ability[]>([]);
-	let specialForms = $state<any[]>([]);
-	let evolutionChain = $state<any[]>([]);
+	let specialForms = $state<SpecialForm[]>([]);
+	let evolutionChain = $state<EvolutionStep[]>([]);
 	let detailLoading = $state(false);
 	let secondaryLoading = $state(false);
 	let isPlayingCry = $state(false);
@@ -173,8 +174,8 @@
 		}
 
 		try {
-			const newDetail = await pokeApi.getPokemon(pokemon.name);
-			const newSpecies = await pokeApi.getPokemonSpecies(newDetail.species.name);
+			const newDetail = await pokeApi.getPokemon(pokemon.name) as unknown as PokemonDetail;
+			const newSpecies = await pokeApi.getPokemonSpecies(newDetail.species.name) as unknown as SpeciesData;
 			
 			detailData = newDetail;
 			speciesData = newSpecies;
@@ -203,7 +204,7 @@
 			const evoId = parseInt(newSpecies.evolution_chain.url.split('/').filter(Boolean).pop() || '0');
 			const evoData = await pokeApi.getEvolutionChain(evoId);
 			
-			let chain: any[] = [];
+			let chain: EvolutionStep[] = [];
 			let currentEvo: any = evoData.chain;
 			while (currentEvo) {
 				chain.push({
@@ -240,7 +241,6 @@
 
 	function playCry() {
 		if (!detailData || isPlayingCry) return;
-		// @ts-ignore
 		const cryUrl = detailData.cries?.latest || detailData.cries?.legacy;
 		if (cryUrl) {
 			isPlayingCry = true;
@@ -263,7 +263,6 @@
 		} else {
 			favorites.add(pokemonName);
 		}
-		favorites = new Set(favorites);
 		localStorage.setItem('poke_favorites', JSON.stringify(Array.from(favorites)));
 	}
 
@@ -284,7 +283,8 @@
 		try {
 			const data = await pokeApi.getPokemonsByType(type);
 			const names = data.pokemon.map((p: any) => p.pokemon.name);
-			typeFilteredNames = new Set(names);
+			typeFilteredNames.clear();
+			names.forEach((n: string) => typeFilteredNames.add(n));
 		} catch (error) {
 			console.error('Gagal fetch tipe:', error);
 		} finally {
@@ -296,7 +296,7 @@
 		if (selectedType) {
 			fetchByType(selectedType);
 		} else {
-			typeFilteredNames = new Set();
+			typeFilteredNames.clear();
 		}
 	});
 
@@ -352,7 +352,9 @@
 	onMount(() => {
 		fetchAllPokemons();
 		const savedFavs = localStorage.getItem('poke_favorites');
-		if (savedFavs) favorites = new Set(JSON.parse(savedFavs));
+		if (savedFavs) {
+			JSON.parse(savedFavs).forEach((name: string) => favorites.add(name));
+		}
 	});
 </script>
 
@@ -382,7 +384,7 @@
 <div class="animate-[fadeIn_0.4s_ease-out]">
 	{#if loading || (selectedType && typeLoading)}
 		<div class="grid grid-cols-2 gap-4">
-			{#each Array(6) as _}
+			{#each Array(6) as _, i (i)}
 				<div
 					class="bg-panel/40 flex h-44 animate-pulse flex-col items-center justify-center rounded-xl border border-white/5 p-4"
 				>
@@ -397,7 +399,6 @@
 				{#each displayedPokemons as pokemon (pokemon.name)}
 					<PokemonCard
 						name={pokemon.name}
-						url={pokemon.url}
 						isFavorite={favorites.has(pokemon.name)}
 						onToggleFavorite={(e) => toggleFavorite(pokemon.name, e)}
 						onprefetch={() => prefetchPokemon(pokemon.name)}
@@ -443,13 +444,11 @@
 	{filteredMoves}
 	bind:modalContentElement
 	{closeDetail}
-	{handleModalKeyDown}
+	handleModalKeyDown={(e) => e.key === 'Escape' && closeDetail()}
 	{playCry}
 	{getTypeStyle}
 	{formatStatName}
 	{navigateToEvo}
-	toggleAbilities={() => isAbilitiesExpanded = !isAbilitiesExpanded}
-	toggleMoves={() => isMovesExpanded = !isMovesExpanded}
 />
 
 {#if showScrollToTop}

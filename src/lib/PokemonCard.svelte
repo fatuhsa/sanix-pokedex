@@ -6,14 +6,13 @@
 
 	interface Props {
 		name: string;
-		url: string;
 		isFavorite: boolean;
 		onToggleFavorite: (e: MouseEvent) => void;
 		onprefetch: () => void;
 		onclick: () => void;
 	}
 
-	let { name, url, isFavorite, onToggleFavorite, onprefetch, onclick }: Props = $props();
+	let { name, isFavorite, onToggleFavorite, onprefetch, onclick }: Props = $props();
 
 	let pokemonData = $state<PokemonDetail | null>(null);
 	let loading = $state(true);
@@ -27,10 +26,6 @@
 			loading = false;
 		}
 	});
-
-	function getID(url: string) {
-		return url.split('/').filter(Boolean).pop();
-	}
 </script>
 
 <div
@@ -64,7 +59,7 @@
 		</div>
 
 		<div class="mt-3 flex gap-1">
-			{#each pokemonData.types as type}
+			{#each pokemonData.types as type (type.type.name)}
 				<span class="px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full border {getTypeStyle(type.type.name)}">
 					{type.type.name}
 				</span>

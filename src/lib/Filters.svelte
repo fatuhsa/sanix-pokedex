@@ -35,6 +35,9 @@
 		<div>
 			<h1 
 				onclick={() => accent.cycle()}
+				onkeydown={(e) => e.key === 'Enter' && accent.cycle()}
+				role="button"
+				tabindex="0"
 				class="text-2xl font-bold tracking-tight text-[#e6e1e5] cursor-pointer select-none active:scale-95 transition-transform"
 			>
 				Pokédex
@@ -112,7 +115,7 @@
 				class="h-10 w-full appearance-none bg-panel border border-white/10 rounded-xl px-4 pr-10 text-[11px] font-bold text-outline outline-none hover:bg-surface-variant/20 transition-all cursor-pointer"
 			>
 				<option value={null}>ALL TYPES</option>
-				{#each POKEMON_TYPES as type}
+				{#each POKEMON_TYPES as type (type)}
 					<option value={type}>{type.toUpperCase()}</option>
 				{/each}
 			</select>

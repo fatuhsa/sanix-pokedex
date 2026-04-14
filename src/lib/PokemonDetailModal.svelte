@@ -1,23 +1,18 @@
 <script lang="ts">
-	import type { Pokemon } from '$lib/types';
-	import type { Pokemon as PokemonDetail, PokemonSpecies, Ability } from 'pokenode-ts';
+	import type { Pokemon, PokemonDetail, SpeciesData, EvolutionStep, SpecialForm } from '$lib/types';
+	import type { Ability } from 'pokenode-ts';
 	import { fade } from 'svelte/transition';
 
-	interface EvolutionStep {
+	interface MoveInfo {
 		name: string;
-		requirements: string | null;
-	}
-
-	interface SpecialForm {
-		name: string;
-		imageUrl: string;
-		types: string[];
+		method: string;
+		level: number;
 	}
 
 	interface Props {
 		selectedPokemon: Pokemon | null;
 		detailData: PokemonDetail | null;
-		speciesData: PokemonSpecies | null;
+		speciesData: SpeciesData | null;
 		abilitiesDetails: Ability[];
 		evolutionChain: EvolutionStep[];
 		specialForms: SpecialForm[];
@@ -29,7 +24,7 @@
 		selectedVersionGroup: string;
 		selectedMoveMethod: 'level-up' | 'machine' | 'all';
 		availableVersionGroups: string[];
-		filteredMoves: any[];
+		filteredMoves: MoveInfo[];
 		modalContentElement: HTMLElement | null;
 		closeDetail: () => void;
 		handleModalKeyDown: (e: KeyboardEvent) => void;
@@ -37,8 +32,6 @@
 		getTypeStyle: (type: string) => string;
 		formatStatName: (name: string) => string;
 		navigateToEvo: (name: string) => void;
-		toggleAbilities: () => void;
-		toggleMoves: () => void;
 	}
 
 	let { 
@@ -87,7 +80,7 @@
 				<p class="text-[10px] font-bold text-primary tracking-widest uppercase">
 					#{String(detailData?.id || 0).padStart(3, '0')} LOG_ENTRY
 				</p>
-				<button onclick={closeDetail} class="text-gray-500 p-1.5 hover:text-white transition-colors">
+				<button onclick={closeDetail} aria-label="Close modal" class="text-gray-500 p-1.5 hover:text-white transition-colors">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 					</svg>
@@ -131,7 +124,7 @@
 					<div class="w-full mb-8">
 						<div class="h-3 w-24 bg-surface-variant/20 mb-4 rounded"></div>
 						<div class="space-y-3">
-							{#each Array(6) as _}
+							{#each Array(6) as _, i (i)}
 								<div class="flex items-center gap-3">
 									<div class="h-2 w-10 bg-surface-variant/20 rounded"></div>
 									<div class="flex-1 h-1.5 bg-surface-variant/10 rounded-full"></div>
@@ -179,7 +172,7 @@
 					</div>
 
 					<div class="mb-5 flex gap-1.5">
-						{#each detailData.types as type}
+						{#each detailData.types as type (type.type.name)}
 							<span class="rounded-lg px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider border {getTypeStyle(type.type.name)}">
 								{type.type.name}
 							</span>
@@ -214,7 +207,7 @@
 						<div class="h-8 w-full animate-pulse rounded-lg bg-surface-variant/30"></div>
 					{:else if evolutionChain.length > 0}
 						<div class="flex flex-wrap items-center gap-1.5">
-							{#each evolutionChain as evo, index}
+							{#each evolutionChain as evo, index (evo.name)}
 								<button
 									onclick={() => navigateToEvo(evo.name)}
 									class="rounded-lg px-3 py-1.5 text-[10px] font-bold transition-all {evo.name === detailData.name
@@ -235,7 +228,7 @@
 				<section class="mb-8">
 					<h3 class="text-[10px] font-bold text-gray-500 mb-4 tracking-widest uppercase">BASE STATS</h3>
 					<div class="space-y-2.5">
-						{#each detailData.stats as stat}
+						{#each detailData.stats as stat (stat.stat.name)}
 							<div class="flex items-center text-[10px] font-bold">
 								<span class="w-14 text-gray-500 uppercase tracking-tighter">{formatStatName(stat.stat.name)}</span>
 								<span class="w-8 text-right text-white mr-3">{stat.base_stat}</span>
@@ -269,7 +262,7 @@
 					
 					{#if isAbilitiesExpanded}
 						<div class="space-y-2 px-1 py-1 animate-[fadeIn_0.2s_ease-out]">
-							{#each abilitiesDetails as ability}
+							{#each abilitiesDetails as ability (ability.name)}
 								<div class="bg-surface-variant/5 rounded-xl p-3.5 border border-white/5">
 									<div class="flex items-center gap-2 mb-1">
 										<span class="text-[10px] font-bold text-primary uppercase">{ability.name.replace(/-/g, ' ')}</span>
@@ -299,7 +292,7 @@
 						<div class="py-2 animate-[fadeIn_0.2s_ease-out]">
 							<div class="grid grid-cols-2 gap-2 mb-3">
 								<select bind:value={selectedVersionGroup} class="bg-surface-variant/30 border border-white/5 rounded-lg px-2 py-1.5 text-[10px] font-bold text-primary outline-none">
-									{#each availableVersionGroups as version}
+									{#each availableVersionGroups as version (version)}
 										<option value={version}>{version.replace(/-/g, ' ')}</option>
 									{/each}
 								</select>
@@ -310,10 +303,10 @@
 								</select>
 							</div>
 							<div class="grid grid-cols-1 gap-1">
-								{#each filteredMoves as move}
+								{#each filteredMoves as move (move.name)}
 									<div class="flex items-center justify-between bg-surface-variant/5 rounded-lg p-2 px-3">
-										<span class="text-[10px] font-bold text-white uppercase">{move!.name}</span>
-										<span class="text-[9px] font-bold text-primary">{move!.level ? 'LV.'+move!.level : '--'}</span>
+										<span class="text-[10px] font-bold text-white uppercase">{move.name}</span>
+										<span class="text-[9px] font-bold text-primary">{move.level ? 'LV.'+move.level : '--'}</span>
 									</div>
 								{/each}
 							</div>

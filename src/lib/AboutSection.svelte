@@ -14,7 +14,7 @@
 	<div class="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
 		<div>
 			<h1 
-				onclick={() => accent.cycle()}
+				onclick={() => accent.cycle()} onkeydown={(e) => e.key === 'Enter' && accent.cycle()} role='button' tabindex='0'
 				class="text-2xl font-bold tracking-tight text-white cursor-pointer select-none active:scale-95 transition-transform"
 			>
 				System Info

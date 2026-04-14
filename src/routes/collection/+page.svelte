@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
+	import { SvelteSet } from 'svelte/reactivity';
 	import { pokeApi } from '$lib/pokeapi';
 	import { getTypeStyle } from '$lib/styles.svelte';
 	import PokemonCard from '$lib/PokemonCard.svelte';
 	import PokemonDetailModal from '$lib/PokemonDetailModal.svelte';
 	import { accent } from '$lib/accent.svelte';
-	import type { Pokemon } from '$lib/types';
-	import type { Pokemon as PokemonDetail, PokemonSpecies, Ability } from 'pokenode-ts';
+	import type { Pokemon, PokemonDetail, SpeciesData, EvolutionStep, SpecialForm } from '$lib/types';
+	import type { Ability } from 'pokenode-ts';
 
-	let shinyIds = $state<number[]>([]);
-	let favoriteNames = $state<string[]>([]);
+	let shinyIds = new SvelteSet<number>();
+	let favoriteNames = new SvelteSet<string>();
 	let activeTab = $state<'shiny' | 'favorites'>('shiny');
 	let loading = $state(true);
 	
@@ -19,10 +20,10 @@
 	// --- Detail Panel State ---
 	let selectedPokemon = $state<Pokemon | null>(null);
 	let detailData = $state<PokemonDetail | null>(null);
-	let speciesData = $state<PokemonSpecies | null>(null);
+	let speciesData = $state<SpeciesData | null>(null);
 	let abilitiesDetails = $state<Ability[]>([]);
-	let specialForms = $state<any[]>([]);
-	let evolutionChain = $state<any[]>([]);
+	let specialForms = $state<SpecialForm[]>([]);
+	let evolutionChain = $state<EvolutionStep[]>([]);
 	let detailLoading = $state(false);
 	let secondaryLoading = $state(false);
 	let isPlayingCry = $state(false);
@@ -38,18 +39,21 @@
 		const savedShinyIds = localStorage.getItem('shiny_pokemon_ids');
 		const savedFavorites = localStorage.getItem('poke_favorites');
 		
-		shinyIds = savedShinyIds ? JSON.parse(savedShinyIds) : [];
-		favoriteNames = savedFavorites ? JSON.parse(savedFavorites) : [];
+		shinyIds.clear();
+		if (savedShinyIds) JSON.parse(savedShinyIds).forEach((id: number) => shinyIds.add(id));
+		
+		favoriteNames.clear();
+		if (savedFavorites) JSON.parse(savedFavorites).forEach((name: string) => favoriteNames.add(name));
 
 		try {
 			// Load shiny data
-			const shinyPromises = shinyIds.map(async (id) => {
+			const shinyPromises = Array.from(shinyIds).map(async (id) => {
 				const data = await pokeApi.getPokemonById(id);
 				return { name: data.name, url: `https://pokeapi.co/api/v2/pokemon/${id}/` };
 			});
 			
 			// Load favorites data
-			const favPromises = favoriteNames.map(async (name) => {
+			const favPromises = Array.from(favoriteNames).map(async (name) => {
 				const data = await pokeApi.getPokemon(name);
 				return { name: data.name, url: `https://pokeapi.co/api/v2/pokemon/${data.id}/` };
 			});
@@ -65,21 +69,19 @@
 
 	function toggleFavorite(pokemonName: string, event: MouseEvent) {
 		event.stopPropagation();
-		let currentFavs = new Set(favoriteNames);
-		if (currentFavs.has(pokemonName)) {
-			currentFavs.delete(pokemonName);
+		if (favoriteNames.has(pokemonName)) {
+			favoriteNames.delete(pokemonName);
 		} else {
-			currentFavs.add(pokemonName);
+			favoriteNames.add(pokemonName);
 		}
-		favoriteNames = Array.from(currentFavs);
-		localStorage.setItem('poke_favorites', JSON.stringify(favoriteNames));
+		localStorage.setItem('poke_favorites', JSON.stringify(Array.from(favoriteNames)));
 		loadCollection(); // Refresh
 	}
 
 	// Re-using common logic from +page.svelte
-	async function openDetail(pokemon: any, keepScroll = false) {
+	async function openDetail(pokemon: Pokemon | { name: string; url: string }, keepScroll = false) {
 		const currentScroll = modalContentElement?.scrollTop || 0;
-		selectedPokemon = pokemon;
+		selectedPokemon = pokemon as Pokemon;
 		detailLoading = true;
 		secondaryLoading = false;
 		
@@ -96,8 +98,8 @@
 		isMovesExpanded = false;
 
 		try {
-			const newDetail = await pokeApi.getPokemon(pokemon.name);
-			const newSpecies = await pokeApi.getPokemonSpecies(newDetail.species.name);
+			const newDetail = await pokeApi.getPokemon(pokemon.name) as unknown as PokemonDetail;
+			const newSpecies = await pokeApi.getPokemonSpecies(newDetail.species.name) as unknown as SpeciesData;
 			
 			detailData = newDetail;
 			speciesData = newSpecies;
@@ -120,7 +122,7 @@
 			const evoId = parseInt(newSpecies.evolution_chain.url.split('/').filter(Boolean).pop() || '0');
 			const evoData = await pokeApi.getEvolutionChain(evoId);
 			
-			let chain: any[] = [];
+			let chain: EvolutionStep[] = [];
 			let currentEvo: any = evoData.chain;
 			while (currentEvo) {
 				chain.push({
@@ -190,7 +192,6 @@
 
 	function playCry() {
 		if (!detailData || isPlayingCry) return;
-		// @ts-ignore
 		const cryUrl = detailData.cries?.latest || detailData.cries?.legacy;
 		if (cryUrl) {
 			isPlayingCry = true;
@@ -245,6 +246,9 @@
 		<div>
 			<h1 
 				onclick={() => accent.cycle()}
+				onkeydown={(e) => e.key === 'Enter' && accent.cycle()}
+				role="button"
+				tabindex="0"
 				class="text-2xl font-bold tracking-tight text-white cursor-pointer select-none active:scale-95 transition-transform"
 			>
 				The Vault
@@ -266,19 +270,19 @@
 			onclick={() => activeTab = 'shiny'}
 			class="flex-1 h-11 rounded-2xl text-[11px] font-bold transition-all border {activeTab === 'shiny' ? 'bg-primary text-space border-primary' : 'bg-panel text-outline border-white/10 hover:bg-white/5'}"
 		>
-			SHINY DEX ({shinyIds.length})
+			SHINY DEX ({shinyIds.size})
 		</button>
 		<button 
 			onclick={() => activeTab = 'favorites'}
 			class="flex-1 h-11 rounded-2xl text-[11px] font-bold transition-all border {activeTab === 'favorites' ? 'bg-primary text-space border-primary' : 'bg-panel text-outline border-white/10 hover:bg-white/5'}"
 		>
-			FAVORITES ({favoriteNames.length})
+			FAVORITES ({favoriteNames.size})
 		</button>
 	</div>
 
 	{#if loading}
 		<div class="grid grid-cols-2 gap-4">
-			{#each Array(4) as _}
+			{#each Array(4) as _, i (i)}
 				<div class="bg-panel/40 flex h-44 animate-pulse flex-col items-center justify-center rounded-xl border border-white/5 p-4">
 					<div class="mb-4 h-16 w-16 rounded-full bg-white/5"></div>
 					<div class="mt-2 h-3 w-20 rounded-full bg-white/10"></div>
@@ -293,8 +297,7 @@
 				{#each currentList as pokemon (pokemon.name)}
 					<PokemonCard
 						name={pokemon.name}
-						url={pokemon.url}
-						isFavorite={new Set(favoriteNames).has(pokemon.name)}
+						isFavorite={favoriteNames.has(pokemon.name)}
 						onToggleFavorite={(e) => toggleFavorite(pokemon.name, e)}
 						onprefetch={() => {}}
 						onclick={() => openDetail(pokemon)}
@@ -339,7 +342,5 @@
 	{playCry}
 	{getTypeStyle}
 	{formatStatName}
-	{navigateToEvo} 
-	toggleAbilities={() => isAbilitiesExpanded = !isAbilitiesExpanded}
-	toggleMoves={() => isMovesExpanded = !isMovesExpanded}
+	{navigateToEvo}
 />
