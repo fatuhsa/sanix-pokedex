@@ -1,6 +1,6 @@
-# Neo-Poke 🌀
+# Sanix Pokedex 🌀
 
-A modern, high-performance Pokémon Encyclopedia built with a sleek terminal-inspired interface. This application provides real-time data from the official PokeAPI with a focus on speed, aesthetics, and a seamless user experience.
+A modern, high-performance Pokémon Encyclopedia built with a sleek Material Design 3 interface. This application provides real-time data from the official PokeAPI with a focus on speed, aesthetics, and a seamless user experience.
 
 ![Status](https://img.shields.io/badge/Status-Development-orange)
 ![Version](https://img.shields.io/badge/Version-0.0.1-blue)
@@ -10,12 +10,11 @@ A modern, high-performance Pokémon Encyclopedia built with a sleek terminal-ins
 
 ## ✨ Features
 
-- **Modern Terminal UI**: Sleek glassmorphism design using Tailwind 4.
+- **Material Design 3 UI**: Sleek glassmorphism design using Tailwind 4 and M3 palettes.
 - **Fast Search & Filtering**: Efficiently query the Pokédex by name, type, and region.
 - **Detailed Info**: Comprehensive stats, types, and evolution data for every Pokémon.
 - **Scanner Mode**: Interactive interface for scanning Pokémon data.
-- **Responsive Design**: Optimized for both desktop and mobile devices.
-- **Real-time Latency Check**: Built-in system to monitor connection speed to PokeAPI.
+- **The Vault**: Persistent collection storage for your favorites and shiny Pokémon.
 
 ---
 
@@ -73,7 +72,7 @@ A modern, high-performance Pokémon Encyclopedia built with a sleek terminal-ins
 - `src/routes/`: App pages and routing.
   - `/`: Main Pokédex view.
   - `/scanner`: Pokémon scanner interface.
-  - `/info`: System information and tech stack details.
+  - `/collection`: The Vault - your favorite and shiny Pokémon collections.
 
 ---
 
@@ -81,7 +80,7 @@ A modern, high-performance Pokémon Encyclopedia built with a sleek terminal-ins
 
 - **Data Source**: [PokeAPI](https://pokeapi.co/) - The RESTful Pokémon API.
 - **Icons**: [Heroicons](https://heroicons.com/) & Custom SVG.
-- **Typography**: Inter & Monospace fonts.
+- **Typography**: Plus Jakarta Sans.
 
 ---
 
