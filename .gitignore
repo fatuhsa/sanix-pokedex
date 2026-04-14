@@ -1,23 +1,36 @@
+# Dependencies
 node_modules
+.pnpm-store
 
-# Output
-.output
+# SvelteKit / Vite / Build
+/.svelte-kit
+/build
+/package
 .vercel
 .netlify
 .wrangler
-/.svelte-kit
-/build
+.output
+.vite-inspect
+*.log
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
 
-# OS
+# OS / IDE
 .DS_Store
 Thumbs.db
+*.local
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.shsh
 
-# Env
+# Environment
 .env
 .env.*
 !.env.example
 !.env.test
 
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+# Extension / Project Specific
+docs/maestro/
+.gemini/
