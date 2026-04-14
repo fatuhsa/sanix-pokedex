@@ -25,18 +25,34 @@
 		activateScanner, 
 		openDetail 
 	}: Props = $props();
+
+	// Dynamic SVG Calculations
+	const radius = 60;
+	const circumference = 2 * Math.PI * radius;
+	let dashOffset = $derived(circumference - (circumference * scanProgress) / 100);
+
+	// Simplified Image Resolution
+	let displayImage = $derived.by(() => {
+		if (!dailyPokemon) return '';
+		const artwork = dailyPokemon.sprites.other?.['official-artwork'];
+		return (isShiny ? artwork?.front_shiny : artwork?.front_default) || artwork?.front_default || '';
+	});
 </script>
 
 <div class="animate-[fadeIn_0.3s_ease-out] pt-0">
-	<!-- Standardized Top Bar -->
+	<!-- Top Bar -->
 	<div class="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
-		<div>
-			<h1 
-				onclick={() => accent.cycle()} onkeydown={(e) => e.key === 'Enter' && accent.cycle()} role='button' tabindex='0'
-				class="text-2xl font-bold tracking-tight text-white cursor-pointer select-none active:scale-95 transition-transform"
-			>
-				Scanner
-			</h1>
+		<div class="flex flex-col">
+			<div class="flex items-center gap-2">
+				<h1 class="text-2xl font-bold tracking-tight text-white">Scanner</h1>
+				<button 
+					onclick={() => accent.cycle()} 
+					onkeydown={(e) => e.key === 'Enter' && accent.cycle()}
+					class="h-4 w-4 rounded-full border border-primary/30 hover:bg-primary/20 transition-colors"
+					title="Cycle Accent Color"
+					aria-label="Change theme color"
+				></button>
+			</div>
 			<p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">
 				Collection Progress: {discoveryPercentage}%
 			</p>
@@ -48,7 +64,7 @@
 		</div>
 	</div>
 
-	<div class="bg-panel relative flex min-h-[340px] flex-col items-center justify-center rounded-[28px] border border-white/5 p-6 text-center shadow-sm">
+	<div class="bg-panel relative flex min-h-[340px] flex-col items-center justify-center rounded-[28px] border border-white/5 p-6 text-center shadow-sm overflow-hidden">
 		{#if isScanning}
 			<div class="relative mb-6 h-32 w-32 flex items-center justify-center">
 				<div class="absolute inset-0 border border-white/5 rounded-full"></div>
@@ -56,18 +72,18 @@
 					<circle
 						cx="64"
 						cy="64"
-						r="60"
+						r={radius}
 						fill="transparent"
 						stroke="currentColor"
 						stroke-width="3"
-						stroke-dasharray="377"
-						stroke-dashoffset={377 - (377 * scanProgress) / 100}
+						stroke-dasharray={circumference}
+						stroke-dashoffset={dashOffset}
 						class="text-primary transition-all duration-300 ease-out"
 					/>
 				</svg>
 				<div class="flex flex-col items-center">
 					<span class="text-2xl font-bold text-white">{scanProgress}%</span>
-					<span class="text-[8px] font-bold text-gray-500 uppercase">Processing</span>
+					<span class="text-[8px] font-bold text-gray-500 uppercase">Searching</span>
 				</div>
 			</div>
 			<p class="text-xs font-bold text-primary animate-pulse uppercase tracking-wider">Looking for Pokémon...</p>
@@ -93,7 +109,7 @@
 							<div class="absolute inset-0 bg-yellow-400/10 rounded-full blur-3xl scale-125 opacity-30 animate-pulse"></div>
 						{/if}
 						<img
-							src={isShiny ? (dailyPokemon.sprites.other?.['official-artwork']?.front_shiny || dailyPokemon.sprites.other?.['official-artwork']?.front_default) : dailyPokemon.sprites.other?.['official-artwork']?.front_default}
+							src={displayImage}
 							alt={dailyPokemon.name}
 							class="relative z-10 h-32 w-32 object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105"
 						/>
@@ -112,11 +128,10 @@
 					</div>
 
 					<button
-						onclick={() =>
-							openDetail({
-								name: dailyPokemon!.name,
-								url: `https://pokeapi.co/api/v2/pokemon/${dailyPokemon!.id}/`
-							})}
+						onclick={() => dailyPokemon && openDetail({
+							name: dailyPokemon.name,
+							url: `https://pokeapi.co/api/v2/pokemon/${dailyPokemon.id}/`
+						})}
 						class="bg-white/5 hover:bg-white/10 text-white font-bold w-full rounded-xl py-3 text-[10px] tracking-wide transition-all active:scale-95 border border-white/5"
 					>
 						VIEW DETAILS
@@ -128,7 +143,7 @@
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
 					</svg>
 				</div>
-				<h3 class="text-sm font-bold text-white mb-1">Scanner Idle</h3>
+				<h3 class="text-sm font-bold text-white mb-1">Scanner Ready</h3>
 				<p class="text-[10px] font-medium text-gray-600 max-w-[160px] leading-snug">
 					Initiate a scan to detect nearby Pokémon
 				</p>
