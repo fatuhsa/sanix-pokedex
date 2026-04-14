@@ -38,7 +38,7 @@
 				Scanner
 			</h1>
 			<p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">
-				Dex Discovery: {discoveryPercentage}%
+				Collection Progress: {discoveryPercentage}%
 			</p>
 		</div>
 		<div class="flex h-9 w-9 items-center justify-center bg-primary/5 border border-primary/10 rounded-full shadow-[0_0_15px_rgba(0,243,255,0.08)] text-primary">
@@ -70,13 +70,13 @@
 					<span class="text-[8px] font-bold text-gray-500 uppercase">Processing</span>
 				</div>
 			</div>
-			<p class="text-xs font-bold text-primary animate-pulse uppercase tracking-wider">Scanning area...</p>
+			<p class="text-xs font-bold text-primary animate-pulse uppercase tracking-wider">Looking for Pokémon...</p>
 		{:else}
 			{#if dailyPokemon}
 				<div class="animate-[fadeIn_0.5s_ease-out] w-full flex flex-col items-center">
 					<div class="flex items-center gap-2 mb-4">
 						<div class="bg-primary/10 px-3 py-0.5 rounded-full border border-primary/20">
-							<p class="text-[8px] font-bold text-primary tracking-widest uppercase">Pokémon Located</p>
+							<p class="text-[8px] font-bold text-primary tracking-widest uppercase">Pokémon Found</p>
 						</div>
 						{#if isShiny}
 							<div class="bg-yellow-500/10 px-3 py-0.5 rounded-full border border-yellow-500/30 animate-pulse">
@@ -145,7 +145,7 @@
 						onclick={activateScanner}
 						class="bg-primary text-space font-bold h-12 w-full rounded-xl text-[10px] tracking-widest transition-all hover:opacity-90 active:scale-[0.98] shadow-md shadow-primary/5 uppercase"
 					>
-						{dailyPokemon ? 'Run New Scan' : 'Start Scan'}
+						{dailyPokemon ? 'Scan Again' : 'Start Scanning'}
 					</button>
 				{/if}
 			</div>

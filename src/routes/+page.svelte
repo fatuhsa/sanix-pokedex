@@ -359,7 +359,7 @@
 </script>
 
 <svelte:head>
-	<title>Pokédex | Terminal Core</title>
+	<title>Sanix Pokedex | Online Database</title>
 </svelte:head>
 
 <Filters 

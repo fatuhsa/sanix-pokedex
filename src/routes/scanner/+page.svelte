@@ -297,7 +297,7 @@
 </script>
 
 <svelte:head>
-	<title>Scanner | Terminal Core</title>
+	<title>Scanner | Sanix Pokedex</title>
 </svelte:head>
 
 <ScannerSection 

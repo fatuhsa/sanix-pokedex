@@ -237,7 +237,7 @@
 </script>
 
 <svelte:head>
-	<title>Vault | Terminal Core</title>
+	<title>Collection | Sanix Pokedex</title>
 </svelte:head>
 
 <div class="animate-[fadeIn_0.3s_ease-out] pt-0">
@@ -251,7 +251,7 @@
 				tabindex="0"
 				class="text-2xl font-bold tracking-tight text-white cursor-pointer select-none active:scale-95 transition-transform"
 			>
-				The Vault
+				My Collection
 			</h1>
 			<p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">
 				Personal Records & Trophies
@@ -313,7 +313,7 @@
 				</div>
 				<p class="text-xs font-bold text-gray-500 uppercase tracking-widest">NO ENTRIES FOUND</p>
 				<p class="mt-2 text-[10px] text-gray-600 px-10 leading-relaxed font-medium">
-					{activeTab === 'shiny' ? 'Discover shiny Pokémon through the scanner to see them here.' : 'Mark your favorite Pokémon to quickly access them in the Vault.'}
+					{activeTab === 'shiny' ? 'Discover shiny Pokémon through the scanner to see them here.' : 'Mark your favorite Pokémon to quickly access them here.'}
 				</p>
 			</div>
 		{/if}

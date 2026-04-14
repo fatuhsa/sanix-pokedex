@@ -17,7 +17,7 @@
 				onclick={() => accent.cycle()} onkeydown={(e) => e.key === 'Enter' && accent.cycle()} role='button' tabindex='0'
 				class="text-2xl font-bold tracking-tight text-white cursor-pointer select-none active:scale-95 transition-transform"
 			>
-				System Info
+				About App
 			</h1>
 			<div class="flex items-center gap-2">
 				<p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">
@@ -78,7 +78,7 @@
 			</div>
 			<div class="bg-panel rounded-2xl border border-white/5 p-4 shadow-sm">
 				<p class="text-sm font-bold text-white">Vite 7</p>
-				<p class="mt-1 text-[9px] text-gray-500 font-bold uppercase tracking-tight">Build System</p>
+				<p class="mt-1 text-[9px] text-gray-500 font-bold uppercase tracking-tight">Built With</p>
 			</div>
 			<div class="bg-panel rounded-2xl border border-white/5 p-4 shadow-sm">
 				<p class="text-sm font-bold text-white">Pokenode-TS</p>

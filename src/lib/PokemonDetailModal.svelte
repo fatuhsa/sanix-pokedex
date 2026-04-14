@@ -78,7 +78,7 @@
 			<div class="h-1 w-10 rounded-full bg-white/10 mx-auto mb-3"></div>
 			<div class="flex items-center justify-between">
 				<p class="text-[10px] font-bold text-primary tracking-widest uppercase">
-					#{String(detailData?.id || 0).padStart(3, '0')} LOG_ENTRY
+					#{String(detailData?.id || 0).padStart(3, '0')} POKÉMON DETAILS
 				</p>
 				<button onclick={closeDetail} aria-label="Close modal" class="text-gray-500 p-1.5 hover:text-white transition-colors">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -202,7 +202,7 @@
 
 				<!-- Evolution Path - Compact -->
 				<section class="mb-8">
-					<h3 class="text-[10px] font-bold text-gray-500 mb-3 tracking-widest uppercase">EVOLUTION CHAIN</h3>
+					<h3 class="text-[10px] font-bold text-gray-500 mb-3 tracking-widest uppercase">EVOLUTION LINE</h3>
 					{#if secondaryLoading && evolutionChain.length === 0}
 						<div class="h-8 w-full animate-pulse rounded-lg bg-surface-variant/30"></div>
 					{:else if evolutionChain.length > 0}
@@ -282,7 +282,7 @@
 						onclick={() => isMovesExpanded = !isMovesExpanded}
 						class="flex w-full items-center justify-between bg-surface-variant/10 hover:bg-surface-variant/20 rounded-xl p-3 px-4 transition-colors border border-white/5"
 					>
-						<span class="text-[10px] font-bold text-white uppercase tracking-wider">MOVE SET</span>
+						<span class="text-[10px] font-bold text-white uppercase tracking-wider">AVAILABLE MOVES</span>
 						<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-500 transition-transform {isMovesExpanded ? 'rotate-180' : ''}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
 						</svg>

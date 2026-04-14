@@ -39,8 +39,8 @@
 			<div class="h-12 w-12 rounded-full border-[4px] border-primary/20 border-t-primary animate-spin"></div>
 		</div>
 		<div class="flex flex-col items-center gap-1">
-			<p class="text-[11px] font-bold text-primary tracking-widest uppercase opacity-80">Syncing Data</p>
-			<p class="text-[9px] font-medium text-outline uppercase tracking-[0.2em]">Material Core 3.0</p>
+			<p class="text-[11px] font-bold text-primary tracking-widest uppercase opacity-80">Loading App</p>
+			<p class="text-[9px] font-medium text-outline uppercase tracking-[0.2em]">Sanix Pokedex v1.0</p>
 		</div>
 	</div>
 {/if}
@@ -95,7 +95,7 @@
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
 					</svg>
 				</div>
-				<span class="text-[11px] font-bold {page.url.pathname === `${base}/collection` ? 'text-[#e6e1e5]' : 'text-outline'}">Vault</span>
+				<span class="text-[11px] font-bold {page.url.pathname === `${base}/collection` ? 'text-[#e6e1e5]' : 'text-outline'}">Collection</span>
 			</a>
 
 			<a
