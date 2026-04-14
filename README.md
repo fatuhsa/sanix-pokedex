@@ -1,29 +1,30 @@
 # Sanix Pokedex 🌀
 
-A modern, high-performance Pokémon Encyclopedia built with a sleek Material Design 3 interface. This application provides real-time data from the official PokeAPI with a focus on speed, aesthetics, and a seamless user experience.
+A modern, high-performance Pokémon Encyclopedia built with a sleek **Material Design 3** interface. This application provides real-time data from the official **PokeAPI** with a focus on speed, aesthetics, and a seamless user experience using the latest web technologies.
 
 ![Status](https://img.shields.io/badge/Status-Development-orange)
-![Version](https://img.shields.io/badge/Version-0.0.1-blue)
+![Version](https://img.shields.io/badge/Version-0.1.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
 
 ## ✨ Features
 
-- **Material Design 3 UI**: Sleek glassmorphism design using Tailwind 4 and M3 palettes.
-- **Fast Search & Filtering**: Efficiently query the Pokédex by name, type, and region.
-- **Detailed Info**: Comprehensive stats, types, and evolution data for every Pokémon.
-- **Scanner Mode**: Interactive interface for scanning Pokémon data.
-- **The Vault**: Persistent collection storage for your favorites and shiny Pokémon.
+- **Material Design 3 UI**: Modern, glassmorphism design using Tailwind CSS 4.0 and M3 color palettes.
+- **Fast Search & Filtering**: Efficiently query the Pokédex by name, type, and various special forms.
+- **Detailed Pokémon Profiles**: Comprehensive stats, types, and evolution lines for every Pokémon.
+- **Discovery Scanner**: Interactive interface for scanning and finding random Pokémon with shiny chances.
+- **My Collection**: Persistent local storage for your favorite and shiny Pokémon collections.
+- **Responsive & Accessible**: Optimized for various screen sizes with focus on web accessibility standards.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Svelte 5](https://svelte.dev/) (utilizing the new Runes engine)
-- **Meta-framework**: [SvelteKit](https://kit.svelte.dev/)
+- **Framework**: [Svelte 5](https://svelte.dev/) (Powered by the **Runes** engine)
+- **Meta-framework**: [SvelteKit 2](https://kit.svelte.dev/)
 - **Styling**: [Tailwind CSS 4.0](https://tailwindcss.com/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict Zero-Error Type Safety)
 - **Build Tool**: [Vite 7](https://vitejs.dev/)
 - **API Wrapper**: [Pokenode-TS](https://github.com/Gabb-0/pokenode-ts)
 - **Package Manager**: [pnpm](https://pnpm.io/)
@@ -64,15 +65,15 @@ A modern, high-performance Pokémon Encyclopedia built with a sleek Material Des
 
 ## 📂 Project Structure
 
-- `src/lib/`: Core components and utilities.
-  - `pokeapi.ts`: API integration logic.
-  - `AboutSection.svelte`: System information and credits.
-  - `Filters.svelte`: Search and filtering components.
-  - `PokemonDetailModal.svelte`: Modal for displaying detailed Pokémon data.
-- `src/routes/`: App pages and routing.
-  - `/`: Main Pokédex view.
-  - `/scanner`: Pokémon scanner interface.
-  - `/collection`: The Vault - your favorite and shiny Pokémon collections.
+- `src/lib/`: Core components and shared logic.
+  - `pokeapi.ts`: Centralized API integration and caching layer.
+  - `types.ts`: Comprehensive TypeScript interfaces for Pokémon data.
+  - `Filters.svelte`: Advanced search and filtering UI.
+  - `PokemonDetailModal.svelte`: Rich detail view for Pokémon data.
+- `src/routes/`: App pages and routing system.
+  - `/`: Main Pokédex explorer.
+  - `/scanner`: Pokémon discovery scanner.
+  - `/collection`: Personal collection of favorites and shinies.
 
 ---
 
@@ -87,7 +88,7 @@ A modern, high-performance Pokémon Encyclopedia built with a sleek Material Des
 ## 👥 Credits
 
 - **Main Developer**: [fatuhsa](https://github.com/fatuhsa)
-- **AI Assistant**: Gemini CLI (Google AI)
+- **AI Engineering Assistant**: Gemini CLI (Google AI)
 
 ---
 
