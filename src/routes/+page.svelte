@@ -33,7 +33,7 @@
 	let speciesData = $state<SpeciesData | null>(null);
 	let abilitiesDetails = $state<Ability[]>([]);
 	let specialForms = $state<SpecialForm[]>([]);
-	let evolutionChain = $state<EvolutionStep[]>([]);
+	let evolutionChain = $state<EvolutionStep | null>(null);
 	let detailLoading = $state(false);
 	let secondaryLoading = $state(false);
 	let isPlayingCry = $state(false);
@@ -120,27 +120,6 @@
 		return names[name] || name.toUpperCase();
 	}
 
-	function formatEvolutionRequirement(details: any[]): string | null {
-		if (!details || details.length === 0) return null;
-		const d = details[0];
-		let parts = [];
-		if (d.trigger.name === 'level-up') {
-			if (d.min_level) parts.push(`LV.${d.min_level}`);
-			if (d.min_happiness) parts.push(`HAPPY`);
-			if (d.held_item) parts.push(`HOLD ${d.held_item.name.replace(/-/g, ' ')}`);
-			if (d.known_move) parts.push(`KNOW ${d.known_move.name.replace(/-/g, ' ')}`);
-			if (d.time_of_day) parts.push(`${d.time_of_day.toUpperCase()}`);
-			if (d.location) parts.push(`AT ${d.location.name.replace(/-/g, ' ')}`);
-			if (parts.length === 0) parts.push('LVL_UP');
-		} else if (d.trigger.name === 'use-item') {
-			parts.push(d.item.name.replace(/-/g, ' '));
-		} else if (d.trigger.name === 'trade') {
-			parts.push('TRADE');
-			if (d.held_item) parts.push(`HOLD ${d.held_item.name.replace(/-/g, ' ')}`);
-		}
-		return parts.join(' ').toUpperCase();
-	}
-
 	async function prefetchPokemon(name: string) {
 		try {
 			const poke = await pokeApi.getPokemon(name);
@@ -161,7 +140,7 @@
 			speciesData = null;
 			abilitiesDetails = [];
 			specialForms = [];
-			evolutionChain = [];
+			evolutionChain = null;
 		}
 		
 		isPlayingCry = false;
@@ -202,18 +181,8 @@
 			const newAbilities = await Promise.all(abilityPromises);
 
 			const evoId = parseInt(newSpecies.evolution_chain.url.split('/').filter(Boolean).pop() || '0');
-			const evoData = await pokeApi.getEvolutionChain(evoId);
+			const newEvoChain = await pokeApi.getParsedEvolutionChain(evoId);
 			
-			let chain: EvolutionStep[] = [];
-			let currentEvo: any = evoData.chain;
-			while (currentEvo) {
-				chain.push({
-					name: currentEvo.species.name,
-					requirements: formatEvolutionRequirement(currentEvo.evolution_details)
-				});
-				currentEvo = currentEvo.evolves_to[0];
-			}
-
 			const specialVarieties = newSpecies.varieties.filter(v => 
 				!v.is_default && (v.pokemon.name.includes('-mega') || v.pokemon.name.includes('-gmax'))
 			);
@@ -228,7 +197,7 @@
 			const newSpecialForms = await Promise.all(formsPromises);
 
 			abilitiesDetails = newAbilities;
-			evolutionChain = chain;
+			evolutionChain = newEvoChain;
 			specialForms = newSpecialForms;
 
 		} catch (error) {
@@ -252,8 +221,8 @@
 	}
 
 	function navigateToEvo(name: string) {
-		const target = allPokemons.find((p) => p.name === name);
-		if (target) openDetail(target, true);
+		const target = allPokemons.find((p) => p.name === name) || { name, url: `https://pokeapi.co/api/v2/pokemon/${name}/` };
+		openDetail(target, true);
 	}
 
 	function toggleFavorite(pokemonName: string, event: MouseEvent) {

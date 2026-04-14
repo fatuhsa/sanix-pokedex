@@ -81,7 +81,9 @@ export type PokemonSpecies = SpeciesData;
 
 export interface EvolutionStep {
 	name: string;
+	id: number;
 	requirements: string | null;
+	evolves_to: EvolutionStep[];
 }
 
 export interface SpecialForm {

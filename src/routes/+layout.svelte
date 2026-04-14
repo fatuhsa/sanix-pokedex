@@ -1,11 +1,13 @@
 <script lang="ts">
 	import '../app.css';
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import { base } from '$app/paths';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { accent } from '$lib/accent.svelte';
+	import TeamDrawer from '$lib/TeamDrawer.svelte';
+	import TeamAnalysis from '$lib/TeamAnalysis.svelte';
+	import { teamStore } from '$lib/team.svelte';
 
 	let { children } = $props();
 	let isGlobalLoading = $state(true);
@@ -21,6 +23,12 @@
 		}
 	});
 
+	$effect(() => {
+		if (typeof window !== 'undefined') {
+			localStorage.setItem('poke_team', JSON.stringify(teamStore.members));
+		}
+	});
+
 	onMount(() => {
 		const timer = setTimeout(() => {
 			isGlobalLoading = false;
@@ -30,7 +38,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/favicon.svg" />
 </svelte:head>
 
 {#if isGlobalLoading}
@@ -82,6 +90,26 @@
 				<span class="text-[11px] font-bold {page.url.pathname === `${base}/scanner` ? 'text-[#e6e1e5]' : 'text-outline'}">Scanner</span>
 			</a>
 
+			<!-- Build Team Button -->
+			<button
+				onclick={() => { teamStore.isDrawerOpen = true; }}
+				class="group flex flex-col items-center gap-1.5 transition-all relative -mt-8"
+			>
+				<div
+					class="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-space shadow-[0_8px_20px_rgba(208,188,255,0.4)] group-active:scale-95 transition-all border-4 border-panel"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+					</svg>
+					{#if teamStore.members.length > 0}
+						<div class="absolute -top-1 -right-1 bg-white text-space text-[10px] font-black h-5 w-5 flex items-center justify-center rounded-full border-2 border-primary animate-bounce">
+							{teamStore.members.length}
+						</div>
+					{/if}
+				</div>
+				<span class="text-[10px] font-black text-primary uppercase tracking-tighter mt-1">BUILD</span>
+			</button>
+
 			<a
 				href="{base}/collection"
 				class="group flex flex-col items-center gap-1.5 transition-all"
@@ -117,9 +145,10 @@
 	</nav>
 </main>
 
-<style>
-	@reference "../app.css";
+<TeamDrawer />
+<TeamAnalysis />
 
+<style>
 	@keyframes fadeIn {
 		from { opacity: 0; }
 		to { opacity: 1; }
@@ -131,6 +160,7 @@
 		background: transparent;
 	}
 	:global(.custom-scrollbar::-webkit-scrollbar-thumb) {
-		@apply bg-surface-variant rounded-full;
+		background: var(--color-surface-variant);
+		border-radius: 9999px;
 	}
 </style>

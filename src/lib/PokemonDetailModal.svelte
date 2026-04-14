@@ -2,6 +2,8 @@
 	import type { Pokemon, PokemonDetail, SpeciesData, EvolutionStep, SpecialForm } from '$lib/types';
 	import type { Ability } from 'pokenode-ts';
 	import { fade } from 'svelte/transition';
+	import EvolutionGraph from './EvolutionGraph.svelte';
+	import { teamStore } from './team.svelte';
 
 	interface MoveInfo {
 		name: string;
@@ -14,7 +16,7 @@
 		detailData: PokemonDetail | null;
 		speciesData: SpeciesData | null;
 		abilitiesDetails: Ability[];
-		evolutionChain: EvolutionStep[];
+		evolutionChain: EvolutionStep | null;
 		specialForms: SpecialForm[];
 		detailLoading: boolean;
 		secondaryLoading: boolean;
@@ -80,11 +82,37 @@
 				<p class="text-[10px] font-bold text-primary tracking-widest uppercase">
 					#{String(detailData?.id || 0).padStart(3, '0')} POKÉMON DETAILS
 				</p>
-				<button onclick={closeDetail} aria-label="Close modal" class="text-gray-500 p-1.5 hover:text-white transition-colors">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-					</svg>
-				</button>
+				<div class="flex items-center gap-2">
+					{#if detailData}
+						{#if teamStore.isInTeam(detailData.id)}
+							<button 
+								onclick={() => teamStore.removePokemonById(detailData!.id)}
+								class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/20 text-red-400 text-[9px] font-black uppercase tracking-tighter transition-all hover:bg-red-500/30 active:scale-95"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4" />
+								</svg>
+								Remove
+							</button>
+						{:else}
+							<button 
+								onclick={() => teamStore.addPokemon(detailData!)}
+								disabled={teamStore.members.length >= 6}
+								class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/20 text-primary text-[9px] font-black uppercase tracking-tighter transition-all hover:bg-primary/30 active:scale-95 disabled:opacity-30 disabled:grayscale"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+								</svg>
+								Add to Team
+							</button>
+						{/if}
+					{/if}
+					<button onclick={closeDetail} aria-label="Close modal" class="text-gray-500 p-1.5 hover:text-white transition-colors">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					</button>
+				</div>
 			</div>
 		</div>
 
@@ -200,26 +228,18 @@
 					</p>
 				</div>
 
-				<!-- Evolution Path - Compact -->
+				<!-- Evolution Path - Interactive Graph -->
 				<section class="mb-8">
-					<h3 class="text-[10px] font-bold text-gray-500 mb-3 tracking-widest uppercase">EVOLUTION LINE</h3>
-					{#if secondaryLoading && evolutionChain.length === 0}
-						<div class="h-8 w-full animate-pulse rounded-lg bg-surface-variant/30"></div>
-					{:else if evolutionChain.length > 0}
-						<div class="flex flex-wrap items-center gap-1.5">
-							{#each evolutionChain as evo, index (evo.name)}
-								<button
-									onclick={() => navigateToEvo(evo.name)}
-									class="rounded-lg px-3 py-1.5 text-[10px] font-bold transition-all {evo.name === detailData.name
-										? 'bg-primary text-space'
-										: 'bg-surface-variant/40 text-gray-400 hover:text-white'}"
-								>
-									{evo.name}
-								</button>
-								{#if index < evolutionChain.length - 1}
-									<span class="text-gray-700 text-xs font-bold">→</span>
-								{/if}
-							{/each}
+					<h3 class="text-[10px] font-bold text-gray-500 mb-1 tracking-widest uppercase">EVOLUTION LINE</h3>
+					{#if secondaryLoading && !evolutionChain}
+						<div class="h-24 w-full animate-pulse rounded-xl bg-surface-variant/30 mt-4"></div>
+					{:else if evolutionChain}
+						<div class="w-full">
+							<EvolutionGraph 
+								node={evolutionChain} 
+								currentPokemonName={detailData.name} 
+								{navigateToEvo} 
+							/>
 						</div>
 					{/if}
 				</section>

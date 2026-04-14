@@ -1,4 +1,5 @@
 import { PokemonClient, EvolutionClient, GameClient, type Pokemon, type PokemonSpecies, type EvolutionChain, type Ability } from 'pokenode-ts';
+import type { EvolutionStep } from '$lib/types';
 
 export const pokemonClient = new PokemonClient();
 export const evolutionClient = new EvolutionClient();
@@ -11,6 +12,38 @@ const cache = {
     evolution: new Map<string, EvolutionChain>(),
     ability: new Map<string, Ability>()
 };
+
+// Helper: Format evolution requirements (translated from +page.svelte)
+function formatEvolutionRequirement(details: any[]): string | null {
+    if (!details || details.length === 0) return null;
+    const d = details[0];
+    let parts = [];
+    if (d.trigger.name === 'level-up') {
+        if (d.min_level) parts.push(`LV.${d.min_level}`);
+        if (d.min_happiness) parts.push(`HAPPY`);
+        if (d.held_item) parts.push(`HOLD ${d.held_item.name.replace(/-/g, ' ')}`);
+        if (d.known_move) parts.push(`KNOW ${d.known_move.name.replace(/-/g, ' ')}`);
+        if (d.time_of_day) parts.push(`${d.time_of_day.toUpperCase()}`);
+        if (d.location) parts.push(`AT ${d.location.name.replace(/-/g, ' ')}`);
+        if (parts.length === 0) parts.push('LVL_UP');
+    } else if (d.trigger.name === 'use-item') {
+        parts.push(d.item.name.replace(/-/g, ' '));
+    } else if (d.trigger.name === 'trade') {
+        parts.push('TRADE');
+    }
+    return parts.length > 0 ? parts.join(' + ') : 'EVO';
+}
+
+// Helper: Recursive evolution node parser
+function parseEvolutionNode(node: any): EvolutionStep {
+    const id = parseInt(node.species.url.split('/').filter(Boolean).pop() || '0');
+    return {
+        name: node.species.name,
+        id,
+        requirements: formatEvolutionRequirement(node.evolution_details),
+        evolves_to: node.evolves_to.map((child: any) => parseEvolutionNode(child))
+    };
+}
 
 export const pokeApi = {
     /**
@@ -56,6 +89,11 @@ export const pokeApi = {
         const data = await evolutionClient.getEvolutionChainById(id);
         cache.evolution.set(key, data);
         return data;
+    },
+
+    async getParsedEvolutionChain(id: number): Promise<EvolutionStep> {
+        const data = await this.getEvolutionChain(id);
+        return parseEvolutionNode(data.chain);
     },
 
     async getPokemonsByType(typeName: string) {

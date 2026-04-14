@@ -10,6 +10,8 @@ A modern, high-performance Pokémon Encyclopedia built with a sleek **Material D
 
 ## ✨ Features
 
+- **Interactive Evolution Visualizer**: Branching evolution paths rendered as clickable interactive graphs.
+- **Tactical Team Builder**: Assemble a 6-Pokémon party with mobile-first drag-and-drop reordering.
 - **Material Design 3 UI**: Modern, glassmorphism design using Tailwind CSS 4.0 and M3 color palettes.
 - **Fast Search & Filtering**: Efficiently query the Pokédex by name, type, and various special forms.
 - **Detailed Pokémon Profiles**: Comprehensive stats, types, and evolution lines for every Pokémon.
