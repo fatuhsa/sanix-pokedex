@@ -4,16 +4,21 @@ export const pokemonClient = new PokemonClient();
 export const evolutionClient = new EvolutionClient();
 export const gameClient = new GameClient();
 
-// Centralized Cache
+// Centralized Cache with consistent string keys
 const cache = {
     pokemon: new Map<string, Pokemon>(),
     species: new Map<string, PokemonSpecies>(),
-    evolution: new Map<number, EvolutionChain>(),
+    evolution: new Map<string, EvolutionChain>(),
     ability: new Map<string, Ability>()
 };
 
 export const pokeApi = {
-    async getAllPokemon(offset = 0, limit = 1302) {
+    /**
+     * Fetch all Pokemon. 
+     * Default limit is set to a high number to cover future gens, 
+     * but can be adjusted or fetched dynamically.
+     */
+    async getAllPokemon(offset = 0, limit = 2000) {
         return await pokemonClient.listPokemons(offset, limit);
     },
 
@@ -27,10 +32,11 @@ export const pokeApi = {
     },
 
     async getPokemonById(id: number) {
-        if (cache.pokemon.has(id.toString())) return cache.pokemon.get(id.toString())!;
+        const key = id.toString();
+        if (cache.pokemon.has(key)) return cache.pokemon.get(key)!;
         
         const data = await pokemonClient.getPokemonById(id);
-        cache.pokemon.set(id.toString(), data);
+        cache.pokemon.set(key, data);
         return data;
     },
 
@@ -44,10 +50,11 @@ export const pokeApi = {
     },
 
     async getEvolutionChain(id: number) {
-        if (cache.evolution.has(id)) return cache.evolution.get(id)!;
+        const key = id.toString();
+        if (cache.evolution.has(key)) return cache.evolution.get(key)!;
         
         const data = await evolutionClient.getEvolutionChainById(id);
-        cache.evolution.set(id, data);
+        cache.evolution.set(key, data);
         return data;
     },
 
